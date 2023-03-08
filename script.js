@@ -4,6 +4,7 @@ const equalSign = document.querySelector('#equal-btn');
 const resultsDisplay = document.querySelector('#display-results');
 const expressionDisplay = document.querySelector('#display-history');
 const allClear = document.querySelector('#clear');
+
 let xValue = '';
 let yValue = '';
 let currentOperator = '';
@@ -40,24 +41,41 @@ function buildY(number){
 }
 
 /* OPERATORS */
+
 operatorButtons.forEach((operator) => {
     operator.addEventListener('click', (e) =>{
-        if(PressedEqual) PressedEqual = false;
+        if(PressedEqual){
+            PressedEqual = false;
+            yValue = '';
+        }
+
+        if(currentOperator === 'sqrt' && enteringNumber === 'x' && xValue === ''){
+            currentOperator = e.target.value;
+            displayExpression();
+        }
 
         if(enteringNumber === 'x' && xValue !== ''){
             currentOperator = e.target.value;
             displayExpression();
             enteringNumber = 'y';
-        }else if(enteringNumber === 'y'  && yValue === ''){
+            return;
+        }
+        
+        if(enteringNumber === 'y'  && yValue === ''){
             currentOperator = e.target.value;
             displayExpression();
-        }else if(enteringNumber === 'y' && yValue !== ''){
+            return;
+        }
+        
+        if(enteringNumber === 'y' && yValue !== ''){
             xValue = operate(Number(xValue),Number(yValue),currentOperator);
             displayResult(xValue);
             currentOperator = e.target.value;
             yValue = '';
             displayExpression();
+            return;
         }
+
     });
 });
 
@@ -105,12 +123,28 @@ function displayExpression(){
 
 
 function buildExpression(){
+
+    let operator = currentOperator;
+
+    switch(currentOperator){
+        case '%':
+            operator = '% of'
+            break;
+        case 'power':
+            operator = '^'
+            break;
+        case 'sqrt':
+            operator = '√'
+            break;
+    }
+
+
     if(enteringNumber === 'x' && currentOperator === ''){
         return `${xValue}`;
     }else if(enteringNumber === 'x' && currentOperator !== ''){
-        return `${xValue} ${currentOperator}`;
+        return `${xValue} ${operator}`;
     }else if(enteringNumber === 'y'){
-        return `${xValue} ${currentOperator} ${yValue}`;
+        return `${xValue} ${operator} ${yValue}`;
     }
         
 }
@@ -132,8 +166,21 @@ function operate(x,y,operator){
         case '/':
             return `${divide(x,y)}`;
             break;
+        case 'power':
+            return `${power(x,y)}`;
+            break;
+        case '%':
+            return `${percentage(x,y)}`;
+            break;
+        case 'sqrt':
+            return `${squareRoot(x,y)}`;
+            break;
+        case '!':
+            return `${factorial(x,y)}`;
+            break;
         default:
             return 'Error';
+
     }
 
 }
@@ -155,4 +202,22 @@ function multiply(x,y){
 function divide(x,y){
     if(y === 0) return "Can't divide by 0";
     return x / y;
+}
+
+function percentage(x,y){
+    return (x / 100) * y;
+}
+
+function power(x,y){
+    return x ** y;
+}
+
+function squareRoot(x){
+    return Math.sqrt(x);
+}
+
+function factorial(x){
+    let r = 1;
+    for(i = x; i > 1; i--) r = r * i;
+    return r;
 }
