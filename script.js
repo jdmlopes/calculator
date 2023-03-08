@@ -47,8 +47,10 @@ operatorButtons.forEach((operator) => {
         if(PressedEqual){
             PressedEqual = false;
             yValue = '';
+            enteringNumber = 'y';
         }
 
+        
         if(e.target.value === 'sqrt' && enteringNumber === 'x' && xValue === ''){
             currentOperator = e.target.value;
             displayExpression();
@@ -91,7 +93,13 @@ operatorButtons.forEach((operator) => {
 
 equalSign.addEventListener('click', (e) =>{
 
-
+    if(currentOperator === 'sqrt' && enteringNumber === 'x' && xValue !== ''){
+        displayExpression();
+        xValue = operate(1,Number(xValue),currentOperator);
+        displayResult(xValue);
+        PressedEqual = true;
+        return;
+    }
 
 
     if(enteringNumber === 'x' && xValue !== ''){
@@ -147,6 +155,9 @@ function buildExpression(){
     let operator = currentOperator;
 
     switch(currentOperator){
+        case '*':
+            operator = 'X';
+            break;
         case '%':
             operator = '% of'
             break;
@@ -158,22 +169,12 @@ function buildExpression(){
             if(enteringNumber === 'x'){
                 return `${operator}${xValue}`;
             }
-
             break;
         case '!':
             break;
-
     }
 
-
-    if(enteringNumber === 'x' && currentOperator === ''){
-        return `${xValue}`;
-    }else if(enteringNumber === 'x' && currentOperator !== ''){
-        return `${xValue} ${operator}`;
-    }else if(enteringNumber === 'y'){
-        return `${xValue} ${operator} ${yValue}`;
-    }
-        
+    return `${xValue} ${operator} ${yValue}`;
 }
 
 
