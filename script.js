@@ -93,6 +93,14 @@ operatorButtons.forEach((operator) => {
 
 equalSign.addEventListener('click', (e) =>{
 
+    if(currentOperator === '!' && xValue !== '' && yValue === ''){
+        displayExpression();
+        xValue = operate(Number(xValue),1,currentOperator);
+        displayResult(xValue);
+        PressedEqual = true;
+        return;
+    }
+
     if(currentOperator === 'sqrt' && enteringNumber === 'x' && xValue !== ''){
         displayExpression();
         xValue = operate(1,Number(xValue),currentOperator);
@@ -204,7 +212,7 @@ function operate(x,y,operator){
             return `${squareRoot(x,y)}`;
             break;
         case '!':
-            return `${factorial(x)}`;
+            return `${factorial(x,y)}`;
             break;
         default:
             return 'Error';
@@ -244,8 +252,8 @@ function squareRoot(x,y){
     return x * Math.sqrt(y);
 }
 
-function factorial(x){
+function factorial(x,y){
     let r = 1;
     for(i = x; i > 1; i--) r = r * i;
-    return r;
+    return r * y;
 }
