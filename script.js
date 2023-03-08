@@ -51,7 +51,7 @@ operatorButtons.forEach((operator) => {
         }else if(enteringNumber === 'y'  && yValue === ''){
             currentOperator = e.target.value;
             displayExpression();
-        }else if(enteringNumber === 'y'){
+        }else if(enteringNumber === 'y' && yValue !== ''){
             xValue = operate(Number(xValue),Number(yValue),currentOperator);
             displayResult(xValue);
             currentOperator = e.target.value;
@@ -62,16 +62,19 @@ operatorButtons.forEach((operator) => {
 });
 
 equalSign.addEventListener('click', (e) =>{
-    PressedEqual = true;
+    
     if(enteringNumber === 'x' && xValue !== ''){
         displayResult(xValue);
         enteringNumber = 'y';
+        PressedEqual = true;
     }else if(enteringNumber === 'y' && yValue === '' && currentOperator === ''){
         displayResult(xValue);
-    }else if(enteringNumber === 'y'){
+        PressedEqual = true;
+    }else if(enteringNumber === 'y' && yValue !== ''){
         displayExpression();
         xValue = operate(Number(xValue),Number(yValue),currentOperator);
         displayResult(xValue);
+        PressedEqual = true;
     }
 });
 
