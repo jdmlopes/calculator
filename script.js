@@ -49,15 +49,25 @@ operatorButtons.forEach((operator) => {
             yValue = '';
         }
 
-        if(currentOperator === 'sqrt' && enteringNumber === 'x' && xValue === ''){
+        if(e.target.value === 'sqrt' && enteringNumber === 'x' && xValue === ''){
             currentOperator = e.target.value;
             displayExpression();
+            return;
+        }
+
+        if(currentOperator === 'sqrt' && enteringNumber === 'x' && xValue !== ''){
+            xValue = operate(1,Number(xValue),currentOperator);
+            displayResult(xValue);
+            currentOperator = e.target.value;
+            displayExpression();
+            enteringNumber = 'y';
+            return;
         }
 
         if(enteringNumber === 'x' && xValue !== ''){
             currentOperator = e.target.value;
-            displayExpression();
             enteringNumber = 'y';
+            displayExpression();
             return;
         }
         
@@ -80,19 +90,29 @@ operatorButtons.forEach((operator) => {
 });
 
 equalSign.addEventListener('click', (e) =>{
-    
+
+
+
+
     if(enteringNumber === 'x' && xValue !== ''){
         displayResult(xValue);
         enteringNumber = 'y';
         PressedEqual = true;
-    }else if(enteringNumber === 'y' && yValue === '' && currentOperator === ''){
+        return;
+    }
+
+    if(enteringNumber === 'y' && yValue === '' && currentOperator === ''){
         displayResult(xValue);
         PressedEqual = true;
-    }else if(enteringNumber === 'y' && yValue !== ''){
+        return;
+    }
+
+    if(enteringNumber === 'y' && yValue !== ''){
         displayExpression();
         xValue = operate(Number(xValue),Number(yValue),currentOperator);
         displayResult(xValue);
         PressedEqual = true;
+        return;
     }
 });
 
@@ -135,7 +155,14 @@ function buildExpression(){
             break;
         case 'sqrt':
             operator = '√'
+            if(enteringNumber === 'x'){
+                return `${operator}${xValue}`;
+            }
+
             break;
+        case '!':
+            break;
+
     }
 
 
@@ -176,7 +203,7 @@ function operate(x,y,operator){
             return `${squareRoot(x,y)}`;
             break;
         case '!':
-            return `${factorial(x,y)}`;
+            return `${factorial(x)}`;
             break;
         default:
             return 'Error';
@@ -212,8 +239,8 @@ function power(x,y){
     return x ** y;
 }
 
-function squareRoot(x){
-    return Math.sqrt(x);
+function squareRoot(x,y){
+    return x * Math.sqrt(y);
 }
 
 function factorial(x){
