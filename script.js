@@ -4,6 +4,7 @@ const equalSign = document.querySelector('#equal-btn');
 const resultsDisplay = document.querySelector('#display-results');
 const expressionDisplay = document.querySelector('#display-history');
 const allClear = document.querySelector('#clear');
+const signButton = document.querySelector('#sign');
 
 let xValue = '';
 let yValue = '';
@@ -19,14 +20,21 @@ numberButtons.forEach((number) =>{
             resetOperation();
         }
 
-        if(enteringNumber === 'x'){
+        if(enteringNumber === 'x' && checkDecimal(e.target.value,xValue)){
             buildX(e.target.value);
-        }else if(enteringNumber === 'y'){
+        }else if(enteringNumber === 'y' && checkDecimal(e.target.value,yValue)){
             buildY(e.target.value);
         }
             
     });
 });
+
+function checkDecimal(digit,number){
+    if(digit !== '.') return true;
+    if(!number.includes('.')) return true;
+
+    return false;
+}
 
 function buildX(number){
     xValue += number;
@@ -132,6 +140,8 @@ equalSign.addEventListener('click', (e) =>{
     }
 });
 
+
+/*  CLEAN DISPLAY */
 allClear.addEventListener('click', clearAll);
 
 function clearAll(){
@@ -148,7 +158,7 @@ function resetOperation(){
     enteringNumber = 'x';
     PressedEqual = false;
 }
-
+/* DISPLAY FUNCTIONS */
 function displayResult(result){
     resultsDisplay.textContent = result;
 }
@@ -161,6 +171,8 @@ function displayExpression(){
 function buildExpression(){
 
     let operator = currentOperator;
+    let x = Number(xValue < 0) ? `(${xValue})` : `${xValue}`;
+    let y = Number(yValue < 0) ? `(${yValue})` : `${yValue}`;
 
     switch(currentOperator){
         case '*':
@@ -175,17 +187,33 @@ function buildExpression(){
         case 'sqrt':
             operator = '√'
             if(enteringNumber === 'x'){
-                return `${operator}${xValue}`;
+                return `${operator}${x}`;
             }
             break;
         case '!':
             break;
     }
 
-    return `${xValue} ${operator} ${yValue}`;
+    return `${x} ${operator} ${y}`;
 }
+/* SIGN */
 
+signButton.addEventListener('click',()=>{
+    if(enteringNumber === 'x'){
+        xValue = (Number(xValue) * -1).toString();
+        displayResult(Number(xValue));
+        displayExpression();
+    }
 
+    if(enteringNumber === 'y'){
+        yValue = (Number(yValue) * -1).toString();
+        displayResult(yValue);
+        displayExpression();
+    }
+    
+});
+
+/* OPERATIONS */
 function operate(x,y,operator){
     if(typeof x !== 'number' || typeof y !== 'number') return 'ERROR';
 
@@ -221,8 +249,6 @@ function operate(x,y,operator){
 
 }
 
-
-/* OPERATIONS */
 function add(x,y){
     return x + y;
 }
