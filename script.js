@@ -4,6 +4,7 @@ const equalSign = document.querySelector('#equal-btn');
 const resultsDisplay = document.querySelector('#display-results');
 const expressionDisplay = document.querySelector('#display-history');
 const allClear = document.querySelector('#clear');
+const backspace = document.querySelector('#backspace');
 const signButton = document.querySelector('#sign');
 
 let xValue = '';
@@ -13,7 +14,7 @@ let enteringNumber = 'x'; //x or y
 let PressedEqual = false;
 
 
-/* NUMBERS */
+/* NUMBERS BUTTONS*/
 numberButtons.forEach((number) =>{
     number.addEventListener('click',(e) =>{
         if(PressedEqual){
@@ -48,7 +49,7 @@ function buildY(number){
     displayResult(yValue);
 }
 
-/* OPERATORS */
+/* OPERATORS BUTTONS*/
 
 operatorButtons.forEach((operator) => {
     operator.addEventListener('click', (e) =>{
@@ -98,7 +99,7 @@ operatorButtons.forEach((operator) => {
 
     });
 });
-
+/* EQUAL BUTTON */
 equalSign.addEventListener('click', (e) =>{
 
     if(currentOperator === '!' && xValue !== '' && yValue === ''){
@@ -158,6 +159,38 @@ function resetOperation(){
     enteringNumber = 'x';
     PressedEqual = false;
 }
+
+/* BACKSPACE BUTTON*/
+backspace.addEventListener('click', () =>{
+    if(enteringNumber === 'x' && xValue !== ''){
+        xValue = xValue.substring(0,xValue.length-1);
+        displayResult(xValue);
+    }
+    if(enteringNumber === 'y' && yValue !== ''){
+        yValue = yValue.substring(0,yValue.length-1);
+        displayResult(yValue);
+    }
+    displayExpression();
+});
+
+/* SIGN */
+
+signButton.addEventListener('click',()=>{
+    if(enteringNumber === 'x'){
+        xValue = (Number(xValue) * -1).toString();
+        displayResult(Number(xValue));
+        displayExpression();
+    }
+
+    if(enteringNumber === 'y'){
+        yValue = (Number(yValue) * -1).toString();
+        displayResult(yValue);
+        displayExpression();
+    }
+    
+});
+
+
 /* DISPLAY FUNCTIONS */
 function displayResult(result){
     resultsDisplay.textContent = result;
@@ -196,24 +229,9 @@ function buildExpression(){
 
     return `${x} ${operator} ${y}`;
 }
-/* SIGN */
 
-signButton.addEventListener('click',()=>{
-    if(enteringNumber === 'x'){
-        xValue = (Number(xValue) * -1).toString();
-        displayResult(Number(xValue));
-        displayExpression();
-    }
 
-    if(enteringNumber === 'y'){
-        yValue = (Number(yValue) * -1).toString();
-        displayResult(yValue);
-        displayExpression();
-    }
-    
-});
-
-/* OPERATIONS */
+/* OPERATIONS FUNCTIONS*/
 function operate(x,y,operator){
     if(typeof x !== 'number' || typeof y !== 'number') return 'ERROR';
 
