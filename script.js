@@ -16,19 +16,20 @@ let PressedEqual = false;
 
 /* NUMBERS BUTTONS*/
 numberButtons.forEach((number) =>{
-    number.addEventListener('click',(e) =>{
-        if(PressedEqual){
-            resetOperation();
-        }
-
-        if(enteringNumber === 'x' && checkDecimal(e.target.value,xValue)){
-            buildX(e.target.value);
-        }else if(enteringNumber === 'y' && checkDecimal(e.target.value,yValue)){
-            buildY(e.target.value);
-        }
-            
-    });
+    number.addEventListener('click', inputDigit.bind(null,number.value));
 });
+
+function inputDigit(digit){
+    if(PressedEqual){
+        resetOperation();
+    }
+
+    if(enteringNumber === 'x' && checkDecimal(digit,xValue)){
+        buildX(digit);
+    }else if(enteringNumber === 'y' && checkDecimal(digit,yValue)){
+        buildY(digit);
+    }
+}
 
 function checkDecimal(digit,number){
     if(digit !== '.') return true;
@@ -52,56 +53,59 @@ function buildY(number){
 /* OPERATORS BUTTONS*/
 
 operatorButtons.forEach((operator) => {
-    operator.addEventListener('click', (e) =>{
-        if(PressedEqual){
-            PressedEqual = false;
-            yValue = '';
-            enteringNumber = 'y';
-        }
-
-        
-        if(e.target.value === 'sqrt' && enteringNumber === 'x' && xValue === ''){
-            currentOperator = e.target.value;
-            displayExpression();
-            return;
-        }
-
-        if(currentOperator === 'sqrt' && enteringNumber === 'x' && xValue !== ''){
-            xValue = operate(1,Number(xValue),currentOperator);
-            displayResult(xValue);
-            currentOperator = e.target.value;
-            displayExpression();
-            enteringNumber = 'y';
-            return;
-        }
-
-        if(enteringNumber === 'x' && xValue !== ''){
-            currentOperator = e.target.value;
-            enteringNumber = 'y';
-            displayExpression();
-            return;
-        }
-        
-        if(enteringNumber === 'y'  && yValue === ''){
-            currentOperator = e.target.value;
-            displayExpression();
-            return;
-        }
-        
-        if(enteringNumber === 'y' && yValue !== ''){
-            xValue = operate(Number(xValue),Number(yValue),currentOperator);
-            displayResult(xValue);
-            currentOperator = e.target.value;
-            yValue = '';
-            displayExpression();
-            return;
-        }
-
-    });
+    operator.addEventListener('click', inputOperator.bind(null,operator.value));
 });
-/* EQUAL BUTTON */
-equalSign.addEventListener('click', (e) =>{
 
+function inputOperator(operator){
+    if(PressedEqual){
+        PressedEqual = false;
+        yValue = '';
+        enteringNumber = 'y';
+    }
+
+    
+    if(operator === 'sqrt' && enteringNumber === 'x' && xValue === ''){
+        currentOperator = operator;
+        displayExpression();
+        return;
+    }
+
+    if(currentOperator === 'sqrt' && enteringNumber === 'x' && xValue !== ''){
+        xValue = operate(1,Number(xValue),currentOperator);
+        displayResult(xValue);
+        currentOperator = operator;
+        displayExpression();
+        enteringNumber = 'y';
+        return;
+    }
+
+    if(enteringNumber === 'x' && xValue !== ''){
+        currentOperator = operator;
+        enteringNumber = 'y';
+        displayExpression();
+        return;
+    }
+    
+    if(enteringNumber === 'y'  && yValue === ''){
+        currentOperator = operator;
+        displayExpression();
+        return;
+    }
+    
+    if(enteringNumber === 'y' && yValue !== ''){
+        xValue = operate(Number(xValue),Number(yValue),currentOperator);
+        displayResult(xValue);
+        currentOperator = operator;
+        yValue = '';
+        displayExpression();
+        return;
+    }
+
+}
+/* EQUAL BUTTON */
+equalSign.addEventListener('click', solveOperation);
+
+function solveOperation(){
     if(currentOperator === '!' && xValue !== '' && yValue === ''){
         displayExpression();
         xValue = operate(Number(xValue),1,currentOperator);
@@ -139,7 +143,8 @@ equalSign.addEventListener('click', (e) =>{
         PressedEqual = true;
         return;
     }
-});
+
+}
 
 
 /*  CLEAN DISPLAY */
@@ -161,7 +166,9 @@ function resetOperation(){
 }
 
 /* BACKSPACE BUTTON*/
-backspace.addEventListener('click', () =>{
+backspace.addEventListener('click', undoDigitInput);
+
+function undoDigitInput(){
     if(enteringNumber === 'x' && xValue !== ''){
         xValue = xValue.substring(0,xValue.length-1);
         displayResult(xValue);
@@ -171,11 +178,13 @@ backspace.addEventListener('click', () =>{
         displayResult(yValue);
     }
     displayExpression();
-});
+}
 
 /* SIGN */
 
-signButton.addEventListener('click',()=>{
+signButton.addEventListener('click',changeSign);
+
+function changeSign(){
     if(enteringNumber === 'x'){
         xValue = (Number(xValue) * -1).toString();
         displayResult(Number(xValue));
@@ -187,9 +196,56 @@ signButton.addEventListener('click',()=>{
         displayResult(yValue);
         displayExpression();
     }
-    
-});
+}
 
+/* KEYBOARD INPUTS */
+/* window.addEventListener('keydown', (e) => {
+    switch(e.key){
+        case '1':
+        break;
+        case '2':
+        break;
+        case '3':
+        break;
+        case '4':
+        break;
+        case '5':
+        break;
+        case '6':
+        break;
+        case '7':
+        break;
+        case '8':
+        break;
+        case '9':
+        break;
+        case '0':
+        break;
+        case 'backspace':
+        break;
+        case 'esc': // AC
+        break;
+        case '+':
+        break;
+        case '-':
+        break;
+        case '/':
+        break;
+        case '*':
+        break;
+        case '%':
+        break;
+        case '!':
+        break;
+        case 'p': //power 
+        break;
+        case 's': //square root
+        break;
+        case '=':
+        break;
+        
+    }
+}); */
 
 /* DISPLAY FUNCTIONS */
 function displayResult(result){
