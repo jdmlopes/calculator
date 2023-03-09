@@ -199,53 +199,54 @@ function changeSign(){
 }
 
 /* KEYBOARD INPUTS */
-/* window.addEventListener('keydown', (e) => {
+window.addEventListener('keydown', (e) => {
     switch(e.key){
         case '1':
-        break;
         case '2':
-        break;
         case '3':
-        break;
         case '4':
-        break;
         case '5':
-        break;
         case '6':
-        break;
         case '7':
-        break;
         case '8':
-        break;
         case '9':
-        break;
         case '0':
-        break;
-        case 'backspace':
-        break;
-        case 'esc': // AC
+            inputDigit(e.key);
         break;
         case '+':
-        break;
         case '-':
-        break;
         case '/':
-        break;
         case '*':
-        break;
         case '%':
-        break;
         case '!':
+            inputOperator(e.key);
         break;
-        case 'p': //power 
+        case 'p':
+        case 'P': //power 
+            inputOperator('power');
         break;
-        case 's': //square root
+        case 's':
+        case 'S': //square root
+            inputOperator('sqrt');
+        break;
+        case 'n':
+        case 'N': //negate number
+            changeSign();
+        break;
+        case 'Backspace':
+        case 'Delete':
+            undoDigitInput();
+        break;
+        case 'Escape': // AC
+            clearAll();
         break;
         case '=':
+        case 'Enter':
+            solveOperation();
         break;
         
     }
-}); */
+});
 
 /* DISPLAY FUNCTIONS */
 function displayResult(result){
