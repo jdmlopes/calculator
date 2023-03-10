@@ -187,14 +187,21 @@ signButton.addEventListener('click',changeSign);
 
 function changeSign(){
     if(off) return;
-    
-    if(enteringNumber === 'x'){
+
+    if(PressedEqual){
+        PressedEqual = false;
+        yValue = '';
+        enteringNumber = 'x';
+        currentOperator = '';
+    }
+
+    if(enteringNumber === 'x' && xValue !== ''){
         xValue = (Number(xValue) * -1).toString();
-        displayResult(Number(xValue));
+        displayResult(xValue);
         displayExpression();
     }
 
-    if(enteringNumber === 'y'){
+    if(enteringNumber === 'y' && yValue !== ''){
         yValue = (Number(yValue) * -1).toString();
         displayResult(yValue);
         displayExpression();
@@ -203,6 +210,7 @@ function changeSign(){
 
 /* KEYBOARD INPUTS */
 window.addEventListener('keydown', (e) => {
+
     switch(e.key){
         case '1':
         case '2':
@@ -214,10 +222,12 @@ window.addEventListener('keydown', (e) => {
         case '8':
         case '9':
         case '0':
+            e.preventDefault();
             inputDigit(e.key);
             break;
         case '.':
         case ',':
+            e.preventDefault();
             inputDigit('.');
             break;
         case '+':
@@ -226,29 +236,36 @@ window.addEventListener('keydown', (e) => {
         case '*':
         case '%':
         case '!':
+            e.preventDefault();
             inputOperator(e.key);
             break;
         case 'p':
         case 'P': //power 
+            e.preventDefault();
             inputOperator('power');
             break;
         case 's':
         case 'S': //square root
+            e.preventDefault();
             inputOperator('sqrt');
             break;
         case 'n':
         case 'N': //negate number
+            e.preventDefault();
             changeSign();
             break;
         case 'Backspace':
         case 'Delete':
+            e.preventDefault();
             undoDigitInput();
             break;
         case 'Escape': // AC
+            e.preventDefault();
             clearAll();
         break;
         case '=':
         case 'Enter':
+            e.preventDefault();
             solveOperation();
             break;
         
