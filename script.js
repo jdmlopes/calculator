@@ -328,11 +328,21 @@ function formatNumberInput(number){
 }
 
 function validateResult(number){
-    if(number === 'Infinity') return 'A HUGE number';
+    if(number === 'Infinity'){
+        resetOperation();
+        return 'A HUGE number';
+    }
 
-    if(number === '-Infinity') return 'A HUGE negative number';
+    if(number === '-Infinity'){
+        resetOperation();
+        return 'A HUGE negative number';
+    }
 
-    if(number === 'NaN') return 'ERROR'
+    if(isNaN(Number(number))){
+        resetOperation();
+        return number;
+    }
+
 
     return number;
 
