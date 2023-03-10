@@ -6,14 +6,27 @@ const expressionDisplay = document.querySelector('#display-history');
 const allClear = document.querySelector('#clear');
 const backspace = document.querySelector('#backspace');
 const signButton = document.querySelector('#sign');
+const onOffButton = document.querySelector('#on-off');
 
 let xValue = '';
 let yValue = '';
 let currentOperator = '';
 let enteringNumber = 'x'; //x or y
 let PressedEqual = false;
+let off = false;
 
 displayResult('0');
+
+onOffButton.addEventListener('click', () => {
+    if(!off){
+        clearAll();
+        off = true
+        displayResult('');
+    }else{
+        off = false;
+        displayResult('0');
+    }
+});
 
 /* NUMBERS BUTTONS*/
 numberButtons.forEach((number) =>{
@@ -27,6 +40,8 @@ operatorButtons.forEach((operator) => {
 });
 
 function inputOperator(operator){
+    if(off) return;
+
     if(PressedEqual){
         PressedEqual = false;
         yValue = '';
@@ -81,6 +96,8 @@ function inputOperator(operator){
 equalSign.addEventListener('click', solveOperation);
 
 function solveOperation(){
+    if(off) return;
+
     if(currentOperator === '!' && xValue !== '' && yValue === ''){
         displayExpression();
         xValue = operate(Number(xValue),1,currentOperator);
@@ -126,6 +143,8 @@ function solveOperation(){
 allClear.addEventListener('click', clearAll);
 
 function clearAll(){
+    if(off) return;
+
     resetOperation();
     displayExpression();
     displayResult('0');
@@ -144,6 +163,8 @@ function resetOperation(){
 backspace.addEventListener('click', undoDigitInput);
 
 function undoDigitInput(){
+    if(off) return;
+
     if(PressedEqual){
         clearAll();
     }
@@ -165,6 +186,8 @@ function undoDigitInput(){
 signButton.addEventListener('click',changeSign);
 
 function changeSign(){
+    if(off) return;
+    
     if(enteringNumber === 'x'){
         xValue = (Number(xValue) * -1).toString();
         displayResult(Number(xValue));
@@ -312,6 +335,8 @@ function formatNegativeNumber(number){
 
 /* INPUT FUNCTIONS */
 function inputDigit(digit){
+    if(off) return;
+
     if(PressedEqual){
         resetOperation();
     }
