@@ -40,11 +40,9 @@ body{
     height: 100px;
     background-color: rgb(195, 222, 231);
     margin-bottom: 10px;
-    text-align: right;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    padding: 0px 15px;
+    padding-right: 15px;
     box-shadow: 10px 10px 50px rgb(130, 171, 185) inset;
     
 }
@@ -52,11 +50,19 @@ body{
 #display-history{
     color: #737373;
     font-size: 18px;
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 #display-results{
     font-size: 30px;
     font-weight: bold;
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 
 /* BUTTONS */

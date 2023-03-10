@@ -13,42 +13,12 @@ let currentOperator = '';
 let enteringNumber = 'x'; //x or y
 let PressedEqual = false;
 
+displayResult('0');
 
 /* NUMBERS BUTTONS*/
 numberButtons.forEach((number) =>{
     number.addEventListener('click', inputDigit.bind(null,number.value));
 });
-
-function inputDigit(digit){
-    if(PressedEqual){
-        resetOperation();
-    }
-
-    if(enteringNumber === 'x' && checkDecimal(digit,xValue)){
-        buildX(digit);
-    }else if(enteringNumber === 'y' && checkDecimal(digit,yValue)){
-        buildY(digit);
-    }
-}
-
-function checkDecimal(digit,number){
-    if(digit !== '.') return true;
-    if(!number.includes('.')) return true;
-
-    return false;
-}
-
-function buildX(number){
-    xValue += number;
-    displayExpression();
-    displayResult(xValue);
-}
-
-function buildY(number){
-    yValue += number;
-    displayExpression();
-    displayResult(yValue);
-}
 
 /* OPERATORS BUTTONS*/
 
@@ -61,6 +31,11 @@ function inputOperator(operator){
         PressedEqual = false;
         yValue = '';
         enteringNumber = 'y';
+    }
+
+    if(operator!== 'sqrt' && xValue === ''){
+        enteringNumber = 'y';
+        xValue = '0';
     }
 
     
@@ -153,7 +128,7 @@ allClear.addEventListener('click', clearAll);
 function clearAll(){
     resetOperation();
     displayExpression();
-    displayResult('');
+    displayResult('0');
 
 }
 
@@ -169,9 +144,14 @@ function resetOperation(){
 backspace.addEventListener('click', undoDigitInput);
 
 function undoDigitInput(){
+    if(PressedEqual){
+        clearAll();
+    }
+
     if(enteringNumber === 'x' && xValue !== ''){
         xValue = xValue.substring(0,xValue.length-1);
-        displayResult(xValue);
+        if(xValue.length === 0) displayResult('0');
+        else displayResult(xValue);
     }
     if(enteringNumber === 'y' && yValue !== ''){
         yValue = yValue.substring(0,yValue.length-1);
@@ -212,7 +192,11 @@ window.addEventListener('keydown', (e) => {
         case '9':
         case '0':
             inputDigit(e.key);
-        break;
+            break;
+        case '.':
+        case ',':
+            inputDigit('.');
+            break;
         case '+':
         case '-':
         case '/':
@@ -220,37 +204,37 @@ window.addEventListener('keydown', (e) => {
         case '%':
         case '!':
             inputOperator(e.key);
-        break;
+            break;
         case 'p':
         case 'P': //power 
             inputOperator('power');
-        break;
+            break;
         case 's':
         case 'S': //square root
             inputOperator('sqrt');
-        break;
+            break;
         case 'n':
         case 'N': //negate number
             changeSign();
-        break;
+            break;
         case 'Backspace':
         case 'Delete':
             undoDigitInput();
-        break;
+            break;
         case 'Escape': // AC
             clearAll();
         break;
         case '=':
         case 'Enter':
             solveOperation();
-        break;
+            break;
         
     }
 });
 
 /* DISPLAY FUNCTIONS */
 function displayResult(result){
-    resultsDisplay.textContent = result;
+    resultsDisplay.textContent = validateResult(result);
 }
 
 function displayExpression(){
@@ -261,8 +245,11 @@ function displayExpression(){
 function buildExpression(){
 
     let operator = currentOperator;
-    let x = Number(xValue < 0) ? `(${xValue})` : `${xValue}`;
-    let y = Number(yValue < 0) ? `(${yValue})` : `${yValue}`;
+
+    let x = formatNegativeNumber(xValue);
+    let y = formatNegativeNumber(yValue);
+    
+
 
     switch(currentOperator){
         case '*':
@@ -287,6 +274,87 @@ function buildExpression(){
     return `${x} ${operator} ${y}`;
 }
 
+/* FORMATTING FUNCTIONS */
+function formatNumberInput(number){
+    if(number === '') return '';
+
+    if(number === '.' || number === '0.') return '0.';
+
+    if(+number === 0) return '0';
+
+    if(+number > 0 && number.charAt(0) === '0' && number.charAt(1) !== '.') return `${number.substring(1)}`; 
+
+    return number;
+}
+
+function validateResult(number){
+    if(number === 'Infinity') return 'A HUGE number';
+
+    if(number === '-Infinity') return 'A HUGE negative number';
+
+    if(number === 'NaN') return 'ERROR'
+
+    return number;
+
+}
+
+function fixFloatingPoint(number){
+    if(number.includes('.')) return `${Number(Number(number).toFixed(12))}`;
+
+    return number;
+}
+
+
+function formatNegativeNumber(number){
+    if(Number(number) < 0) return `(${+number})`;
+    return number;
+}
+
+/* INPUT FUNCTIONS */
+function inputDigit(digit){
+    if(PressedEqual){
+        resetOperation();
+    }
+
+    if(enteringNumber === 'x' && checkDecimal(digit,xValue)){
+        buildX(digit);
+    }else if(enteringNumber === 'y' && checkDecimal(digit,yValue)){
+        buildY(digit);
+    }
+}
+
+function checkDecimal(digit,number){
+    if(digit !== '.') return true;
+    if(!number.includes('.')) return true;
+
+    return false;
+}
+
+function buildX(number){
+    if(checkInputLimit(`${xValue}`)) return;
+    xValue += number;
+    xValue = formatNumberInput(xValue);
+    displayExpression();
+    displayResult(xValue);
+}
+
+function buildY(number){
+    if(checkInputLimit(`${yValue}`)) return;
+    yValue += number;
+    yValue = formatNumberInput(yValue);
+    displayExpression();
+    displayResult(yValue);
+}
+
+function checkInputLimit(number){
+    if(number.length > 17){
+        alert("Number is too big, Can't input anymore");
+        return true;
+    }
+    return false;
+    
+}
+
 
 /* OPERATIONS FUNCTIONS*/
 function operate(x,y,operator){
@@ -294,31 +362,32 @@ function operate(x,y,operator){
 
     switch(operator){
         case '+':
-            return `${add(x,y)}`;
+            return fixFloatingPoint(`${add(x,y)}`);
             break;
         case '-':
-            return `${subtract(x,y)}`;
+            return fixFloatingPoint(`${subtract(x,y)}`);
             break;
         case '*':
-            return `${multiply(x,y)}`;
+            return fixFloatingPoint(`${multiply(x,y)}`);
             break;
         case '/':
-            return `${divide(x,y)}`;
+            if(y === 0) return "ERROR, Can't divide by 0";
+            return fixFloatingPoint(`${divide(x,y)}`);
             break;
         case 'power':
-            return `${power(x,y)}`;
+            return fixFloatingPoint(`${power(x,y)}`);
             break;
         case '%':
-            return `${percentage(x,y)}`;
+            return fixFloatingPoint(`${percentage(x,y)}`);
             break;
         case 'sqrt':
-            return `${squareRoot(x,y)}`;
+            return fixFloatingPoint(`${squareRoot(x,y)}`);
             break;
         case '!':
-            return `${factorial(x,y)}`;
+            return fixFloatingPoint(`${factorial(x,y)}`);
             break;
         default:
-            return 'Error';
+            return 'ERROR';
 
     }
 
