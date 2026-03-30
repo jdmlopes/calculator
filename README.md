@@ -1,2 +1,2 @@
-# calculator
-A basic calculator made with HTML, CSS and JavaScript
+# generic calculator
+Uma calculadora básica feita apenas com HTML, CSS e JavaScript
